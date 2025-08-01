@@ -137,4 +137,4 @@ Balance data is fetched from the Lavender Five RPC endpoint and compared against
 
 ## License
 
-[Add your license here]
+[LICENCE](./LICENSE)
