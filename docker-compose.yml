@@ -1,0 +1,14 @@
+services:
+  wallet-monitor:
+    build: .
+    container_name: wallet-monitor
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    volumes:
+      - wallet_data:/app/data
+      - ./.env:/app/.env:ro
+
+volumes:
+  wallet_data:
+    driver: local
