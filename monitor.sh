@@ -1,7 +1,11 @@
 #!/bin/bash
+ADDRESS="$1"
+if [ -z "$ADDRESS" ]; then
+    echo "Usage: $0 <address>"
+    exit 1
+fi
 
 RPC="https://rest.lavenderfive.com:443"
-ADDRESS="axelar15tpzp26qhuksfp8wcfmq9skljlysnw7n5yny43"
 
 STATS_FILE="stats.txt"
 NEW_STATS_FILE="new_stats.txt"
@@ -13,7 +17,18 @@ function check_stats() {
 
 function get_stats() {
 	AVAILABLE_AXL=$(curl -s "$RPC/axelar/cosmos/bank/v1beta1/balances/$ADDRESS" | jq -r '.balances[] | select(.denom == "uaxl") | (.amount | tonumber / 1000000)')
+    # if curl response contains "Invalid numeric literal at line 1" then the RPC hit rate limit
+    if [[ $? -ne 0 ]]; then
+        echo "Error fetching data from RPC. Please check the RPC endpoint or your network connection."
+        exit 1
+    fi
+
 	DELEGATED_AXL=$(curl -s "$RPC/axelar/cosmos/staking/v1beta1/delegations/$ADDRESS" | jq -r '.delegation_responses[0].balance.amount | tonumber / 1000000')
+    if [[ $? -ne 0 ]]; then
+        echo "Error fetching data from RPC. Please check the RPC endpoint or your network connection."
+        exit 1
+    fi
+
 	TOTAL_AXL=$(bc -l <<< "$AVAILABLE_AXL + $DELEGATED_AXL")
 
 	echo "------------------------------"
@@ -29,9 +44,16 @@ function get_stats() {
 }
 
 function compare_stats() {
-    get_stats > $NEW_STATS_FILE
+    get_stats "$ADDRESS" > $NEW_STATS_FILE
 
-    DIFF=$(diff $STATS_FILE $NEW_STATS_FILE) || echo "creating new stats file" && cp $NEW_STATS_FILE $STATS_FILE
+    if [ ! -f $STATS_FILE ]; then
+        echo "No previous stats file found. Creating one."
+        cp $NEW_STATS_FILE $STATS_FILE
+        mv $NEW_STATS_FILE "new_balance_$(date +%Y-%m-%d_%H:%M:%S).txt"
+        return
+    fi
+
+    DIFF=$(diff $STATS_FILE $NEW_STATS_FILE)
 
     if [ -z "$DIFF" ]; then
         echo "No changes detected."
@@ -39,7 +61,7 @@ function compare_stats() {
     else
         echo "Changes detected:"
         echo "$DIFF"
-        cp $NEW_STATS_FILE "$(date +%Y-%m-%d_%H:%M:%S).txt"
+        cp $STATS_FILE "new_balance_$(date +%Y-%m-%d_%H:%M:%S).txt"
         mv $NEW_STATS_FILE $STATS_FILE
     fi
 }
