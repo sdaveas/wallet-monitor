@@ -7,8 +7,8 @@ fi
 
 RPC="https://rest.lavenderfive.com:443"
 
-STATS_FILE="stats.txt"
-NEW_STATS_FILE="new_stats.txt"
+STATS_FILE="data/stats.txt"
+NEW_STATS_FILE="data/new_stats.txt"
 
 function check_stats() {
     get_stats
@@ -49,7 +49,7 @@ function compare_stats() {
     if [ ! -f $STATS_FILE ]; then
         echo "No previous stats file found. Creating one."
         cp $NEW_STATS_FILE $STATS_FILE
-        mv $NEW_STATS_FILE "new_balance_$(date +%Y-%m-%d_%H:%M:%S).txt"
+        mv $NEW_STATS_FILE "data/new_balance_$(date +%Y-%m-%d_%H:%M:%S).txt"
         return
     fi
 
@@ -61,7 +61,7 @@ function compare_stats() {
     else
         echo "Changes detected:"
         echo "$DIFF"
-        cp $STATS_FILE "new_balance_$(date +%Y-%m-%d_%H:%M:%S).txt"
+        cp $STATS_FILE "data/new_balance_$(date +%Y-%m-%d_%H:%M:%S).txt"
         mv $NEW_STATS_FILE $STATS_FILE
     fi
 }
