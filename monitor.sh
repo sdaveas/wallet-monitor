@@ -1,11 +1,15 @@
 #!/bin/bash
 ADDRESS="$1"
 if [ -z "$ADDRESS" ]; then
-    echo "Usage: $0 <address>"
+    echo "Usage: $0 <address> <rpc_url>"
     exit 1
 fi
 
-RPC="https://rest.lavenderfive.com:443"
+RPC="$2"
+if [ -z "$RPC" ]; then
+    echo "Usage: $0 <address> <rpc_url>"
+    exit 1
+fi
 
 STATS_FILE="data/stats.txt"
 NEW_STATS_FILE="data/new_stats.txt"

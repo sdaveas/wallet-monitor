@@ -14,7 +14,7 @@ function run_alert() {
 }
         
 function run_monitor() {
-    watch -n 60 -c "./monitor.sh \"$ADDRESS\""
+    watch -n 60 -c "./monitor.sh \"$ADDRESS\" \"$RPC\""
 }
 
 run_alert &
