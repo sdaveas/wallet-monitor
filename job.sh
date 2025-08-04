@@ -7,8 +7,9 @@ if [ -z "$ADDRESS" ]; then
 fi    
 
 function run_alert() {
+    TEXT="There was a change in the balance of your wallet, please check it out: https://www.mintscan.io/axelar/address/$ADDRESS"
     while true; do
-        ./alert.sh
+        ./alert.sh "$TEXT"
         sleep 1
     done
 }
