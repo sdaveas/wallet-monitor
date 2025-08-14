@@ -1,3 +1,5 @@
+Use [axelar-wallet-monitor](https://github.com/sdaveas/axelar-wallet-monitor) instead!
+
 # Wallet Monitor
 
 A cryptocurrency wallet monitoring system that tracks balance changes for Axelar network addresses and sends Telegram notifications when changes are detected.
